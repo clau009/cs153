@@ -104,7 +104,7 @@ extern int sys_unlink(void);
 extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
-extern int sys_waitpid(void);
+extern int sys_waitpid(void);   //this was added for lab1
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -128,7 +128,7 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
-[SYS_waitpid] sys_waitpid,
+[SYS_waitpid] sys_waitpid,    //this was added for lab1
 };
 
 void

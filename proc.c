@@ -317,20 +317,23 @@ wait(int *status)
 
 //------------------------------------------------------------------------------------------------------
 //ADDED WAITPID
-/*
+
 int waitpid(int pid, int * status, int options)
 {
   struct proc *p;
    int havekids, pid;
    struct proc * curproc = myproc();
-
+   int foundpid=0;
    acquire(&ptable.lock);
    for(;;){
-     havekids = 0;
+    // havekids = 0;
      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-	if(p->parent != curproc)
+	if(p->pid != pid)
 		continue;
-	havekids = 1;
+	// pid = p->pid; we have to wait for the process to finish first before we takes its pid
+	//havekids = 1;
+        foundpid=1;
+	
 	if(p->state == ZOMBIE){
 	pid = p->pid;
 	kfree(p->kstrack);
@@ -341,20 +344,22 @@ int waitpid(int pid, int * status, int options)
 	p->name[=] = 0;
 	p->killed = 0;
 	p->state = UNUSED;
+	*status = p->exitstatus;	
 	release(&ptable.lock);
-	*status = p->exitstatus;
+//	*status = p->exitstatus;
 	return pid;
 	}
     }
 
-   if(!havekids || curproc->killed){
+ 
+   if(!foundpid || curproc->killed){
 	release(&ptable.lock);
 	return -1;
    }
 
 sleep(curproc, &ptable.lock);
 }
-}*/
+}
 //------------------------------------------------------------------------------------------------------
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
