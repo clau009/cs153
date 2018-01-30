@@ -321,7 +321,7 @@ wait(int *status)
 int waitpid(int pid, int * status, int options)
 {
   struct proc *p;
-   int havekids, pid;
+ 	int pid1;
    struct proc * curproc = myproc();
    int foundpid=0;
    acquire(&ptable.lock);
@@ -335,19 +335,19 @@ int waitpid(int pid, int * status, int options)
         foundpid=1;
 	
 	if(p->state == ZOMBIE){
-	pid = p->pid;
-	kfree(p->kstrack);
+	pid1 = p->pid;
+	kfree(p->kstack);
 	p->kstack = 0;
 	freevm(p->pgdir);
 	p->pid = 0;
 	p->parent = 0;
-	p->name[=] = 0;
+	p->name[0] = 0;
 	p->killed = 0;
 	p->state = UNUSED;
 	*status = p->exitstatus;	
 	release(&ptable.lock);
 //	*status = p->exitstatus;
-	return pid;
+	return pid1;
 	}
     }
 
