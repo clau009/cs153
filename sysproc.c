@@ -7,6 +7,7 @@
 #include "mmu.h"
 #include "proc.h"
 
+
 int
 sys_fork(void)
 {
@@ -36,8 +37,12 @@ int
 sys_waitpid(void)
 {
   int *status;
-  argptr(0, (char**) &status, sizeof(int*));	
-  return wait(status);
+  int options;
+  int pid;
+  argint(0, &pid);
+  argptr(1, (char**) &status, sizeof(int*));
+  argint(3, &options);	
+  return waitpid(pid, status, options);
 }
 
 

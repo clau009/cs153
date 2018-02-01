@@ -1,9 +1,17 @@
 #include "types.h"
 #include "user.h"
- 
+#include "stat.h" 
 int main(int argc, char *argv[])
 {
+/*int pid,exitstatus;
+pid = fork();
+if(pid == 0){
+exit(0);
+}
+waitpid(pid, &exitstatus, 0);
 
+return 0;
+}*/
 
  	
 	int exitWait(void);

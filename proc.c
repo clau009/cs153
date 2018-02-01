@@ -227,6 +227,7 @@ fork(void)
 void
 exit(int status)
 {
+  cprintf("\n\n we are inside exit \n\n");
   struct proc *curproc = myproc();
   struct proc *p;
   int fd;
@@ -274,6 +275,7 @@ exit(int status)
 int
 wait(int *status)
 {
+cprintf("\n\n we are inside wait \n\n"); 
   struct proc *p;
   int havekids, pid;
   struct proc *curproc = myproc();
@@ -320,20 +322,25 @@ wait(int *status)
 
 int waitpid(int pid, int * status, int options)
 {
+  cprintf("\n\n inside waitpid \n\n");   //added this as test
   struct proc *p;
  	int pid1;
    struct proc * curproc = myproc();
    int foundpid=0;
+
    acquire(&ptable.lock);
    for(;;){
     // havekids = 0;
      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-	if(p->pid != pid)
+	if(p->pid != pid){
 		continue;
+	}
 	// pid = p->pid; we have to wait for the process to finish first before we takes its pid
 	//havekids = 1;
-        foundpid=1;
-	
+	else{
+        foundpid=1;   //if we find the pid then set flag to true
+	}
+
 	if(p->state == ZOMBIE){
 	pid1 = p->pid;
 	kfree(p->kstack);
@@ -352,7 +359,7 @@ int waitpid(int pid, int * status, int options)
     }
 
  
-   if(!foundpid || curproc->killed){
+   if(!foundpid || curproc->killed){   //if pid was not found then set flag to false and return error
 	release(&ptable.lock);
 	return -1;
    }
