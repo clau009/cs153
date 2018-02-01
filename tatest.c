@@ -1,10 +1,11 @@
 #include "types.h"
 #include "user.h"
-#include "proc.h"
-
+ 
 int main(int argc, char *argv[])
 {
-	
+
+
+ 	
 	int exitWait(void);
 	int waitPid(void);
 	
@@ -96,6 +97,6 @@ int waitPid(void){
       
       return 0;
   }
-      
+     
       
     
