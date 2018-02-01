@@ -2,8 +2,8 @@
 #include "user.h"
 #include "stat.h" 
 int main(int argc, char *argv[])
-{
-/*int pid,exitstatus;
+/*{
+int pid,exitstatus;
 pid = fork();
 if(pid == 0){
 exit(0);
@@ -13,18 +13,18 @@ waitpid(pid, &exitstatus, 0);
 return 0;
 }*/
 
- 	
+{ 	
 	int exitWait(void);
 	int waitPid(void);
 	
 
   printf(1, "\n This program tests the correctness of your lab#1\n");
   
-  if (atoi(argv[1]) == 1)
+  //if (atoi(argv[1]) == 1)
 	exitWait();
-  else if (atoi(argv[1]) == 2)
+  //else if (atoi(argv[1]) == 2)
 	waitPid();
-  else 
+//  else 
    printf(1, "\ntype \"lab1 1\" to test exit and wait, \"lab1 2\" to test waitpid \n");
   
     // End of test
