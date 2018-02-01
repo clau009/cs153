@@ -172,7 +172,7 @@ UPROGS=\
 	_sh\
 	_stressfs\
 	_usertests\
-	_tatest.c\
+	_tatest\
 	_wc\
 	_zombie\
 
