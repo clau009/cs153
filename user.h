@@ -3,9 +3,10 @@ struct stat;
 struct rtcdate;
 
 // system calls
+int waitpid(int, int*, int);
 int fork(void);
 int exit(int) __attribute__((noreturn));
-int wait(void);
+int wait(int*);
 int pipe(int*);
 int write(int, void*, int);
 int read(int, void*, int);
