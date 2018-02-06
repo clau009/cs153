@@ -7,7 +7,13 @@
 #include "mmu.h"
 #include "proc.h"
 
+int sys_addpriority(void){  
+//will change priority pointer and will return if out of range (0-31)
+int* priorityset;
+int priority;
 
+return 0;
+}
 int
 sys_fork(void)
 {

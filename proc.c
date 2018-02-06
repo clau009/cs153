@@ -367,6 +367,16 @@ int waitpid(int pid, int * status, int options)
 sleep(curproc, &ptable.lock);
 }
 }
+
+int addpriority(int* priorityset, int priority) //explicit shouldnt be void will change later
+{
+
+
+return 0;
+}
+
+
+
 //------------------------------------------------------------------------------------------------------
 //PAGEBREAK: 42
 // Per-CPU process scheduler.

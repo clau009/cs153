@@ -3,6 +3,7 @@ struct stat;
 struct rtcdate;
 
 // system calls
+int addpriority(int*, int);
 int waitpid(int, int*, int);
 int fork(void);
 int exit(int) __attribute__((noreturn));
