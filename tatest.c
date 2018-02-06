@@ -41,6 +41,7 @@ int exitWait(void) {
 
   for (i = 0; i < 2; i++) {
     pid = fork();
+   // addpriority(pid, 0);
     if (pid == 0) { // only the child executed this code
       if (i == 0)
       {

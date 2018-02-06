@@ -340,7 +340,7 @@ int waitpid(int pid, int * status, int options)
 	else{
         foundpid=1;   //if we find the pid then set flag to true
 	}
-
+ 
 	if(p->state == ZOMBIE){
 	pid1 = p->pid;
 	kfree(p->kstack);
@@ -367,14 +367,21 @@ int waitpid(int pid, int * status, int options)
 sleep(curproc, &ptable.lock);
 }
 }
-
-int addpriority(int* priorityset, int priority) //explicit shouldnt be void will change later
+//-----------------------------------------------------------------------
+int addpriority(int pid, int set_priority)
 {
+struct proc *p;
 
+for(p = ptable.proc; p<&ptable.proc[NPROC]; p++){
+
+	if(p->pid == pid){ //checks if the current process pid is the one we want to set.
+		p->priority = set_priority; //sets current process priority to the specified one
+	}
 
 return 0;
 }
 
+//-----------------------------------------------------------------------
 
 
 //------------------------------------------------------------------------------------------------------
@@ -392,7 +399,7 @@ scheduler(void)
   struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
-  
+   
   for(;;){
     // Enable interrupts on this processor.
     sti();
@@ -402,7 +409,8 @@ scheduler(void)
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
-
+      //add a loop here 
+      if(p->state == RUNNABLE && p->priority
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.

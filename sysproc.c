@@ -9,11 +9,12 @@
 
 int sys_addpriority(void){  
 //will change priority pointer and will return if out of range (0-31)
-int* priorityset;
-int priority;
+int pid;	//sets the specific pid to the set_priority
+int set_priority; // adds the specified process priority
 
 return 0;
 }
+
 int
 sys_fork(void)
 {
@@ -47,7 +48,7 @@ sys_waitpid(void)
   int pid;
   argint(0, &pid);
   argptr(1, (char**) &status, sizeof(int*));
-  argint(3, &options);	
+  argint(2, &options);	
   return waitpid(pid, status, options);
 }
 

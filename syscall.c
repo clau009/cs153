@@ -130,7 +130,7 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_waitpid] sys_waitpid,    //this was added for lab1
-[SYS_addpriority] sys_addpriority,
+[SYS_addpriority] sys_addpriority, //lab 2
 };
 
 void
