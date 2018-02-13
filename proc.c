@@ -227,7 +227,7 @@ fork(void)
 void
 exit(int status)
 {
-  cprintf("\n\n we are inside exit \n\n");
+//  cprintf("\n\n we are inside exit \n\n");
   struct proc *curproc = myproc();
   struct proc *p;
   int fd;
@@ -275,7 +275,7 @@ exit(int status)
 int
 wait(int *status)
 {
-cprintf("\n\n we are inside wait \n\n"); 
+//cprintf("\n\n we are inside wait \n\n"); 
   struct proc *p;
   int havekids, pid;
   struct proc *curproc = myproc();
@@ -322,7 +322,7 @@ cprintf("\n\n we are inside wait \n\n");
 
 int waitpid(int pid, int * status, int options)
 {
-  cprintf("\n\n inside waitpid \n\n");   //added this as test
+  //cprintf("\n\n inside waitpid \n\n");   //added this as test
   struct proc *p;
  	int pid1;
    struct proc * curproc = myproc();
