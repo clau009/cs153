@@ -396,7 +396,7 @@ return 0;
 void
 scheduler(void)
 {
-  struct proc *p;
+ struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
   int i = 0;
@@ -429,8 +429,9 @@ scheduler(void)
       // Process is done running for now.
       // It should have changed its p->state before coming back.
     }
-    release(&ptable.lock);
+    //release(&ptable.lock);
 }
+release(&ptable.lock);
 }
 }
 // Enter scheduler.  Must hold only ptable.lock
