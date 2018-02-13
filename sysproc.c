@@ -11,7 +11,8 @@ int sys_addpriority(void){
 //will change priority pointer and will return if out of range (0-31)
 int pid;	//sets the specific pid to the set_priority
 int set_priority; // adds the specified process priority
-
+argint(0, &pid);
+argint(1, &set_priority);
 return 0;
 }
 

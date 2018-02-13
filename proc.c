@@ -377,14 +377,14 @@ for(p = ptable.proc; p<&ptable.proc[NPROC]; p++){
 	if(p->pid == pid){ //checks if the current process pid is the one we want to set.
 		p->priority = set_priority; //sets current process priority to the specified one
 	}
-
+}
 return 0;
 }
 
 //-----------------------------------------------------------------------
 
 
-//------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -397,10 +397,9 @@ void
 scheduler(void)
 {
   struct proc *p;
-  struct proc *highestpriority;
   struct cpu *c = mycpu();
   c->proc = 0;
-  int min = 31; 
+  int i = 0;
   for(;;){
     // Enable interrupts on this processor.
     sti();
@@ -408,35 +407,32 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
+      //if(p->state != RUNNABLE)
+        //continue;
       //add a loop here 
-      if(p->state == RUNNABLE && p->priority < min){
-	min = p->priority;
-        highestpriority = p;
+      for(i = 0; i < 32; ++i){
+	if(p->priority == i && p->state == RUNNABLE){
+		c->proc = p;
+		switchuvm(p);
+		p->state = RUNNING;
+		swtch(&(c->scheduler), p->context);
+		switchkvm();
+		c->proc = 0; 
 	}
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
       //c->proc = p;  chaged this line so current process is the highest priority
-      c->proc = highestpriority;
       //switchuvm(p); changed this so its the process with highest priority thats running
-      switchuvm(highestpriority);
       //p->state = RUNNING;
-      highestpriority->state = RUNNING;
       //swtch(&(c->scheduler), p->context);
-      swtch(&(highestpriority->scheduler), p->context); 
-      switchkvm();
-
       // Process is done running for now.
       // It should have changed its p->state before coming back.
-      c->proc = 0;
     }
     release(&ptable.lock);
-
-  }
 }
-
+}
+}
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores
 // intena because intena is a property of this
