@@ -397,9 +397,10 @@ void
 scheduler(void)
 {
   struct proc *p;
+  struct proc *highestpriority;
   struct cpu *c = mycpu();
   c->proc = 0;
-   
+  int min = 31; 
   for(;;){
     // Enable interrupts on this processor.
     sti();
@@ -410,15 +411,21 @@ scheduler(void)
       if(p->state != RUNNABLE)
         continue;
       //add a loop here 
-      if(p->state == RUNNABLE && p->priority
+      if(p->state == RUNNABLE && p->priority < min){
+	min = p->priority;
+        highestpriority = p;
+	}
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      c->proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
-
-      swtch(&(c->scheduler), p->context);
+      //c->proc = p;  chaged this line so current process is the highest priority
+      c->proc = highestpriority;
+      //switchuvm(p); changed this so its the process with highest priority thats running
+      switchuvm(highestpriority);
+      //p->state = RUNNING;
+      highestpriority->state = RUNNING;
+      //swtch(&(c->scheduler), p->context);
+      swtch(&(highestpriority->scheduler), p->context); 
       switchkvm();
 
       // Process is done running for now.
