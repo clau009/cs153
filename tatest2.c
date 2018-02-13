@@ -39,7 +39,7 @@ return 0;
 			for(k=0;k<10000;k++) {
 				asm("nop"); }}
 		printf(1, "\n child# %d with priority %d has finished! \n",getpid(),30-10*i);		
-		
+	exit(0);	
         }
         else {
 			printf(2," \n Error \n");
