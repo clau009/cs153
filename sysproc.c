@@ -13,7 +13,7 @@ int pid;	//sets the specific pid to the set_priority
 int set_priority; // adds the specified process priority
 argint(0, &pid);
 argint(1, &set_priority);
-return 0;
+return addpriority(pid,set_priority);
 }
 
 int

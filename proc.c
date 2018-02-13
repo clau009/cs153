@@ -370,14 +370,20 @@ sleep(curproc, &ptable.lock);
 //-----------------------------------------------------------------------
 int addpriority(int pid, int set_priority)
 {
-struct proc *p;
-
+struct proc *p;  //myproc();
+acquire(&ptable.lock);
 for(p = ptable.proc; p<&ptable.proc[NPROC]; p++){
 
 	if(p->pid == pid){ //checks if the current process pid is the one we want to set.
 		p->priority = set_priority; //sets current process priority to the specified one
+	//p->state = RUNNABLE;	
 	}
+
+//p->priority=set_priority;
+//p->state=RUNNABLE;
 }
+release(&ptable.lock);
+//yield();
 return 0;
 }
 
@@ -405,12 +411,13 @@ scheduler(void)
     sti();
 
     // Loop over process table looking for process to run.
-    acquire(&ptable.lock);
+    acquire(&ptable.lock); 
+     for(i = 0; i < 32; i++){
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       //if(p->state != RUNNABLE)
         //continue;
       //add a loop here 
-      for(i = 0; i < 32; ++i){
+      //for(i = 0; i < 32; ++i){
 	if(p->priority == i && p->state == RUNNABLE){
 		c->proc = p;
 		switchuvm(p);
@@ -429,7 +436,7 @@ scheduler(void)
       // Process is done running for now.
       // It should have changed its p->state before coming back.
     }
-    //release(&ptable.lock);
+   
 }
 release(&ptable.lock);
 }
