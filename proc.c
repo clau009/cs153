@@ -415,8 +415,12 @@ scheduler(void)
 	acquire(&ptable.lock); 
     for(i = 31; i >= 0; --i){
 	while(flag){
+		//cprintf("asdasdasD\n");
+		flag = 0;
 		for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+			//while(flag){
 			if(p->priority == i && p->state == RUNNABLE){
+				//cprintf("should not print first one\n");
 				flag = 1;
 				c->proc = p;
 				switchuvm(p);
@@ -424,9 +428,6 @@ scheduler(void)
 				swtch(&(c->scheduler), p->context);
 				switchkvm();
 				c->proc = 0; 
-			} else {
-				flag = 0;
-				continue;
 			}
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
@@ -439,6 +440,7 @@ scheduler(void)
       // It should have changed its p->state before coming back.
    		}
    	}
+	flag = 1;
    }
 	release(&ptable.lock);
 }
