@@ -375,7 +375,7 @@ struct proc *p = myproc();
 //for(p = ptable.proc; p<&ptable.proc[NPROC]; p++){
 
 //	if(p->pid == pid){ //checks if the current process pid is the one we want to set.
-		p->priority = set_priority; //sets current process priority to the specified one
+	p->priority = set_priority; //sets current process priority to the specified one
 	p->state = RUNNABLE;	
 //	}
 
@@ -413,7 +413,11 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
 	acquire(&ptable.lock); 
+//<<<<<<< HEAD
     for(i = 0; i < 32; ++i){
+//=======
+    for(i = 0; i <= 31; i++){
+//>>>>>>> 3d81f7ef58138924c05c55adf37fb64d9bbad507
 	while(flag){
 		//cprintf("asdasdasD\n");
 		flag = 0;
@@ -444,6 +448,7 @@ scheduler(void)
 	flag = 1;
    }
 	release(&ptable.lock);
+}
 }
 }
 // Enter scheduler.  Must hold only ptable.lock
