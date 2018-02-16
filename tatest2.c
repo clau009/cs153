@@ -25,12 +25,13 @@ return 0;
   
     printf(1, "\n  Step 2: testing the priority scheduler and setpriority(int priority)) systema call:\n");
     printf(1, "\n  Step 2: Assuming that the priorities range between range between 0 to 31\n");
-    printf(1, "\n  Step 2: 31 is the highest priority. All processes have a default priority of 10\n");
+    printf(1, "\n  Step 2: 0 is the highest priority. All processes have a default priority of 10\n");
     printf(1, "\n  Step 2: The parent processes will switch to priority 0\n");
     addpriority(&pid, 0);
     for (i = 0; i <  3; i++) {
 	pid = fork();
 	if (pid > 0 ) {
+		printf(1, "Inside parent\n");
 		continue;}
 	else if ( pid == 0) {
 
