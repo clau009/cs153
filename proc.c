@@ -413,11 +413,12 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
 	acquire(&ptable.lock); 
-    for(i = 31; i >= 0; --i){
+    for(i = 0; i < 32; ++i){
 	while(flag){
 		//cprintf("asdasdasD\n");
 		flag = 0;
-		for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		//for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		for(p = &ptable.proc[NPROC] - 1; p >= ptable.proc; p--){
 			//while(flag){
 			if(p->priority == i && p->state == RUNNABLE){
 				//cprintf("should not print first one\n");
