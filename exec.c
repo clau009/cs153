@@ -30,30 +30,31 @@ exec(char *path, char **argv)
   pgdir = 0;
 
   // Check ELF header
-  if(readi(ip, (char*)&elf, 0, sizeof(elf)) != sizeof(elf))
+  if(readi(ip, (char*)&elf, 0, sizeof(elf)) != sizeof(elf))// opens executable and parses it
     goto bad;
   if(elf.magic != ELF_MAGIC)
     goto bad;
 
-  if((pgdir = setupkvm()) == 0)
+  if((pgdir = setupkvm()) == 0) //initializes kernel memory
     goto bad;
-
+  
+  //The stack is loaded in from here
   // Load program into memory.
   sz = 0;
   for(i=0, off=elf.phoff; i<elf.phnum; i++, off+=sizeof(ph)){
-    if(readi(ip, (char*)&ph, off, sizeof(ph)) != sizeof(ph))
+    if(readi(ip, (char*)&ph, off, sizeof(ph)) != sizeof(ph))    //reads memory
       goto bad;
-    if(ph.type != ELF_PROG_LOAD)
+    if(ph.type != ELF_PROG_LOAD)           //checks if file is loadable
       continue;
-    if(ph.memsz < ph.filesz)
+    if(ph.memsz < ph.filesz)       //checks if there is enough memory to load file size
       goto bad;
-    if(ph.vaddr + ph.memsz < ph.vaddr)
+    if(ph.vaddr + ph.memsz < ph.vaddr)  //checks if loading the address will overflow
       goto bad;
-    if((sz = allocuvm(pgdir, sz, ph.vaddr + ph.memsz)) == 0)
+    if((sz = allocuvm(pgdir, sz, ph.vaddr + ph.memsz)) == 0) //allocated the memory
       goto bad;
-    if(ph.vaddr % PGSIZE != 0)
+    if(ph.vaddr % PGSIZE != 0)  //checks if stack takes one page
       goto bad;
-    if(loaduvm(pgdir, (char*)ph.vaddr, ip, ph.off, ph.filesz) < 0)
+    if(loaduvm(pgdir, (char*)ph.vaddr, ip, ph.off, ph.filesz) < 0) 
       goto bad;
   }
   iunlockput(ip);
@@ -63,13 +64,15 @@ exec(char *path, char **argv)
   // Allocate two pages at the next page boundary.
   // Make the first inaccessible.  Use the second as the user stack.
   sz = PGROUNDUP(sz);
-  if((sz = allocuvm(pgdir, sz, sz + 2*PGSIZE)) == 0)
-    goto bad;
+  //if((sz = allocuvm(pgdir, sz, sz + 2*PGSIZE)) == 0)   //allocuvm initialized pte so va to page is allocated and now the page may be used
+    if((sz = allocuvm(pgdir, KERNBASE- 4, KERNBASE - 2*PGSIZE) ==  
+	goto bad;
   clearpteu(pgdir, (char*)(sz - 2*PGSIZE));
-  sp = sz;
+  sp = sz;                      
 
+  // heap is loaded in here, the second page is being filled now 
   // Push argument strings, prepare rest of stack in ustack.
-  for(argc = 0; argv[argc]; argc++) {
+  for(argc = 0; argv[argc]; argc++) {     
     if(argc >= MAXARG)
       goto bad;
     sp = (sp - (strlen(argv[argc]) + 1)) & ~3;
