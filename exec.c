@@ -33,12 +33,11 @@ exec(char *path, char **argv)
   if(readi(ip, (char*)&elf, 0, sizeof(elf)) != sizeof(elf))// opens executable and parses it
     goto bad;
   if(elf.magic != ELF_MAGIC)
-    goto bad;
 
   if((pgdir = setupkvm()) == 0) //initializes kernel memory
     goto bad;
   
-  //The stack is loaded in from here
+  // The stack is loaded in from here
   // Load program into memory.
   sz = 0;
   for(i=0, off=elf.phoff; i<elf.phnum; i++, off+=sizeof(ph)){
@@ -63,12 +62,12 @@ exec(char *path, char **argv)
 
   // Allocate two pages at the next page boundary.
   // Make the first inaccessible.  Use the second as the user stack.
-  sz = PGROUNDUP(sz);
+  //sz = PGROUNDUP(sz);	//gives top of of the stack
   //if((sz = allocuvm(pgdir, sz, sz + 2*PGSIZE)) == 0)   //allocuvm initialized pte so va to page is allocated and now the page may be used
-    if((sz = allocuvm(pgdir, KERNBASE- 4, KERNBASE - 2*PGSIZE) ==  
+    if((sp = allocuvm(pgdir, KERNBASE- 4, KERNBASE - 2*PGSIZE) == 0)  
 	goto bad;
-  clearpteu(pgdir, (char*)(sz - 2*PGSIZE));
-  sp = sz;                      
+  clearpteu(pgdir, (char*)(sp - 2*PGSIZE)); //makes sure the heap and stack dont touch this zone buffer.
+  //sp = sz;                      
 
   // heap is loaded in here, the second page is being filled now 
   // Push argument strings, prepare rest of stack in ustack.
