@@ -64,11 +64,16 @@ exec(char *path, char **argv)
   // Make the first inaccessible.  Use the second as the user stack.
   //sz = PGROUNDUP(sz);	//gives top of of the stack
   //if((sz = allocuvm(pgdir, sz, sz + 2*PGSIZE)) == 0)   //allocuvm initialized pte so va to page is allocated and now the page may be used
+  //
+  //
+  //			Changed allocuvm so that the newly allocated memory in the stack will be pointing to the bottom of the user space (KERNBASE -4 )
     if((sp = allocuvm(pgdir, KERNBASE- 4, KERNBASE - 2*PGSIZE) == 0)  
 	goto bad;
   clearpteu(pgdir, (char*)(sp - 2*PGSIZE)); //makes sure the heap and stack dont touch this zone buffer.
-  //sp = sz;                      
 
+//--------------------------------------------------------------------------------------------------------------------
+  sp = KERNBASE - 4; 				// changes the stack pointer so that it points tothe top of the stack	                     
+//--------------------------------------------------------------------------------------------------------------------
   // heap is loaded in here, the second page is being filled now 
   // Push argument strings, prepare rest of stack in ustack.
   for(argc = 0; argv[argc]; argc++) {     
