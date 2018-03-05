@@ -336,8 +336,20 @@ copyuvm(pde_t *pgdir, uint sz, uint sp)
       goto bad;
   }
 
-  for(j = KERNELBASE-4; j < sp; i += PGSIZE){
-	if(
+  for(j = KERNBASE- 4 - sp; j < KERNBASE - 4; j += PGSIZE){
+	if((pte = walkpgdir(pgdir, (void *) j, 0)) == 0)
+      		panic("copyuvm: pte should exist");
+    if(!(*pte & PTE_P))
+      	panic("copyuvm: page not present");
+    	pa = PTE_ADDR(*pte);
+    	flags = PTE_FLAGS(*pte);
+    if((mem = kalloc()) == 0)
+      	goto bad;
+    	memmove(mem, (char*)P2V(pa), PGSIZE);
+    if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0)
+      	goto bad;
+  }
+
 
   return d;
 
