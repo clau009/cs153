@@ -77,7 +77,15 @@ trap(struct trapframe *tf)
             cpuid(), tf->cs, tf->eip);
     lapiceoi();
     break;
-
+   case T_PGFLT:
+	if( rcr2() < (KERNBASE - 4 - myproc()->sp) && rcr2() > myproc()->sz){
+	 if(KERNBASE - 4 - sp - 2*PGSIZE > sz){
+	   if(sp = allocuvm(pgdir, KERNBASE - 4 - sp, KERNBASE - 4- 2*PGSIZE)
+		goto bad;
+		clearpteu(pgdir, (char*)(sp- 2*PGSIZE));
+		}
+	}
+	break;
   //PAGEBREAK: 13
   default:
     if(myproc() == 0 || (tf->cs&3) == 0){
