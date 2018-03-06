@@ -67,7 +67,7 @@ exec(char *path, char **argv)
   //
   //
   //			Changed allocuvm so that the newly allocated memory in the stack will be pointing to the bottom of the user space (KERNBASE -4 )
-    if((sp = allocuvm(pgdir, KERNBASE- 4, KERNBASE - 2*PGSIZE) == 0)  
+    if((sp = allocuvm(pgdir, KERNBASE- 4, KERNBASE - 2*PGSIZE) == 0))  
 	goto bad;
   clearpteu(pgdir, (char*)(sp - 2*PGSIZE)); //makes sure the heap and stack dont touch this zone buffer.
 

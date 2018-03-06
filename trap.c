@@ -78,13 +78,14 @@ trap(struct trapframe *tf)
     lapiceoi();
     break;
    case T_PGFLT:
-	if( rcr2() < (KERNBASE - 4 - myproc()->sp) && rcr2() > myproc()->sz){
-	 if(KERNBASE - 4 - sp - 2*PGSIZE > sz){
-	   if(sp = allocuvm(pgdir, KERNBASE - 4 - sp, KERNBASE - 4- 2*PGSIZE)
+	if( rcr2() > (KERNBASE - 4 - myproc()->sp) && rcr2() < (KERNBASE - 4 - myproc()->sp + PGSIZE)){
+	 if(KERNBASE - 4 - myproc()->sp - 2*PGSIZE > myproc()->sz){
+	   if((myproc()->sp = allocuvm(myproc()->pgdir, KERNBASE - 4 - myproc()->sp, KERNBASE - 4- 2*PGSIZE)== 0)){
 		goto bad;
-		clearpteu(pgdir, (char*)(sp- 2*PGSIZE));
+		clearpteu(myproc()->pgdir, (char*)(myproc()->sp - 2*PGSIZE));
 		}
 	}
+}
 	break;
   //PAGEBREAK: 13
   default:
@@ -100,8 +101,9 @@ trap(struct trapframe *tf)
             myproc()->pid, myproc()->name, tf->trapno,
             tf->err, cpuid(), tf->eip, rcr2());
     myproc()->killed = 1;
+	break;
   }
-
+}
   // Force process exit if it has been killed and is in user space.
   // (If it is still executing in the kernel, let it keep running
   // until it gets to the regular system call return.)
