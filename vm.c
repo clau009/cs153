@@ -160,7 +160,7 @@ switchuvm(struct proc *p)
     panic("switchuvm: no process");
   if(p->kstack == 0)
     panic("switchuvm: no kstack");
-  if(p->pgdir == 0)
+   if(p->pgdir == 0)
     panic("switchuvm: no pgdir");
 
   pushcli();
@@ -317,7 +317,7 @@ copyuvm(pde_t *pgdir, uint sz, uint sp)
 {
   pde_t *d;
   pte_t *pte;
-  uint pa, i, flags;
+  uint pa,i,j, flags;
   char *mem;
 
   if((d = setupkvm()) == 0)

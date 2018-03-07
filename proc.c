@@ -130,7 +130,7 @@ userinit(void)
     panic("userinit: out of memory?");
   inituvm(p->pgdir, _binary_initcode_start, (int)_binary_initcode_size);
   p->sz = PGSIZE;
-  p->sp = PGSIZE; //added this for lab3
+  p->sp = 2*PGSIZE; //added this for lab3
   memset(p->tf, 0, sizeof(*p->tf));
   p->tf->cs = (SEG_UCODE << 3) | DPL_USER;
   p->tf->ds = (SEG_UDATA << 3) | DPL_USER;
@@ -164,6 +164,7 @@ growproc(int n)
 
   sz = curproc->sz;
   if(n > 0){
+     
     if((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0)
       return -1;
   } else if(n < 0){
@@ -234,9 +235,9 @@ exit(int status)
   struct proc *p;
   int fd;
 
-  if(curproc == initproc)
+  if(curproc == initproc){
     panic("init exiting");
-
+}
   // Close all open files.
   for(fd = 0; fd < NOFILE; fd++){
     if(curproc->ofile[fd]){

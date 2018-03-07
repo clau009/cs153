@@ -36,7 +36,10 @@ exec(char *path, char **argv)
 
   if((pgdir = setupkvm()) == 0) //initializes kernel memory
     goto bad;
-  
+ 
+// if(pgdir == 0)
+	//cprintf("fucked\n");
+
   // The stack is loaded in from here
   // Load program into memory.
   sz = 0;
@@ -62,17 +65,20 @@ exec(char *path, char **argv)
 
   // Allocate two pages at the next page boundary.
   // Make the first inaccessible.  Use the second as the user stack.
-  //sz = PGROUNDUP(sz);	//gives top of of the stack
-  //if((sz = allocuvm(pgdir, sz, sz + 2*PGSIZE)) == 0)   //allocuvm initialized pte so va to page is allocated and now the page may be used
-  //
+// sz = PGROUNDUP(sz);	//gives top of of the stack
+ // if((sz = allocuvm(pgdir, sz, sz + 2*PGSIZE)) == 0) goto bad;   //allocuvm initialized pte so va to page is allocated and now the page may be used
+ // clearpteu(pgdir, (char*)(sz- 2*PGSIZE));
+// sp = sz;
   //
   //			Changed allocuvm so that the newly allocated memory in the stack will be pointing to the bottom of the user space (KERNBASE -4 )
-    if((sp = allocuvm(pgdir, KERNBASE- 4, KERNBASE - 2*PGSIZE) == 0))  
-	goto bad;
-  clearpteu(pgdir, (char*)(sp - 2*PGSIZE)); //makes sure the heap and stack dont touch this zone buffer.
+  sp = KERNBASE - 4;
 
-//--------------------------------------------------------------------------------------------------------------------
-  sp = KERNBASE - 4; 				// changes the stack pointer so that it points tothe top of the stack	                     
+    if((sp = allocuvm(pgdir, sp- 2*PGSIZE, sp) == 0))  
+	goto bad;
+//cprintf("clear\n");
+  clearpteu(pgdir, (char*)(KERNBASE -4 - 2*PGSIZE)); //makes sure the heap and stack dont touch this zone buffer.
+	//--------------------------------------------------------------------------------------------------------------------
+ sp = KERNBASE -4; 				// changes the stack pointer so that it points tothe top of the stack	                     
 //--------------------------------------------------------------------------------------------------------------------
   // heap is loaded in here, the second page is being filled now 
   // Push argument strings, prepare rest of stack in ustack.
@@ -104,8 +110,10 @@ exec(char *path, char **argv)
   oldpgdir = curproc->pgdir;
   curproc->pgdir = pgdir;
   curproc->sz = sz;
+  curproc->sp = PGSIZE;
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
+  cprintf("here\n");
   switchuvm(curproc);
   freevm(oldpgdir);
   return 0;
