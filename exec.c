@@ -37,8 +37,8 @@ exec(char *path, char **argv)
   if((pgdir = setupkvm()) == 0) //initializes kernel memory
     goto bad;
  
-// if(pgdir == 0)
-	//cprintf("fucked\n");
+ if(pgdir == 0)
+ cprintf("fucked\n");
 
   // The stack is loaded in from here
   // Load program into memory.
@@ -73,12 +73,12 @@ exec(char *path, char **argv)
   //			Changed allocuvm so that the newly allocated memory in the stack will be pointing to the bottom of the user space (KERNBASE -4 )
   sp = KERNBASE - 4;
 
-    if((sp = allocuvm(pgdir, sp- 2*PGSIZE, sp) == 0))  
+    if((sp = allocuvm(pgdir, sp- PGSIZE, sp) == 0))  
 	goto bad;
 //cprintf("clear\n");
-  clearpteu(pgdir, (char*)(KERNBASE -4 - 2*PGSIZE)); //makes sure the heap and stack dont touch this zone buffer.
+ //clearpteu(pgdir, (char*)(KERNBASE -4 - 2*PGSIZE)); //makes sure the heap and stack dont touch this zone buffer.
 	//--------------------------------------------------------------------------------------------------------------------
- sp = KERNBASE -4; 				// changes the stack pointer so that it points tothe top of the stack	                     
+ sp = PGROUNDDOWN(sp); 				// changes the stack pointer so that it points tothe top of the stack	                     
 //--------------------------------------------------------------------------------------------------------------------
   // heap is loaded in here, the second page is being filled now 
   // Push argument strings, prepare rest of stack in ustack.
@@ -110,7 +110,7 @@ exec(char *path, char **argv)
   oldpgdir = curproc->pgdir;
   curproc->pgdir = pgdir;
   curproc->sz = sz;
-  curproc->sp = PGSIZE;
+  curproc->sp = sp;
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
   cprintf("here\n");

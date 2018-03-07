@@ -319,7 +319,7 @@ copyuvm(pde_t *pgdir, uint sz, uint sp)
   pte_t *pte;
   uint pa,i,j, flags;
   char *mem;
-
+cprintf("copy\n");
   if((d = setupkvm()) == 0)
     return 0;
   for(i = 0; i < sz; i += PGSIZE){
