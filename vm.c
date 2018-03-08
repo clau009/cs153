@@ -319,7 +319,9 @@ copyuvm(pde_t *pgdir, uint sz , uint pages)
   pte_t *pte;
   uint pa, i, flags;
   char *mem;
-
+  uint a,b;
+ a = PGROUNDDOWN(KERNBASE);
+ b = PGROUNDDOWN(a)- ((myproc()->pages-1)*PGSIZE);
   if((d = setupkvm()) == 0)
     return 0;
   for(i = 0; i < sz; i += PGSIZE){
@@ -337,7 +339,8 @@ copyuvm(pde_t *pgdir, uint sz , uint pages)
     if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0)
       goto bad;
   }
-    for(i = KERNBASE - 4; i > KERNBASE - 4 - pages ; i -= PGSIZE){
+ 
+    for(i = b; i < a ; i += PGSIZE){
     if((pte = walkpgdir(pgdir, (void *) i, 0)) == 0){
       panic("copyuvm: 1 pte should exist");
 	cprintf("2\n");
