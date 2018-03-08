@@ -152,12 +152,11 @@ userinit(void)
 
   release(&ptable.lock);
 }
-int stack(void){
-uint a,b;
+int growuvm(void){
+
 struct proc *curproc = myproc();
-a = PGROUNDUP(KERNBASE - (curproc->pages +1)*PGSIZE);
-b = KERNBASE - curproc->pages*PGSIZE -1;
-if(allocuvm(curproc->pgdir, a,b) == 0)
+
+if(allocuvm(curproc->pgdir, PGROUNDUP(KERNBASE - (curproc->pages+1)*PGSIZE),KERNBASE - curproc->pages*PGSIZE -1) == 0)
 return -1;
 
 curproc->pages = curproc->pages+1;

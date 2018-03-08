@@ -122,7 +122,7 @@ int 		waitpid(int,int*, int);
 void            wakeup(void*);
 int 		addpriority(int, int);
 void            yield(void);
-
+int             growuvm(void);
 // swtch.S
 void            swtch(struct context**, struct context*);
 
