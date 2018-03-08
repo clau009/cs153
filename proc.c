@@ -227,7 +227,7 @@ fork(void)
 void
 exit(int status)
 {
-//  cprintf("\n\n we are inside exit \n\n");
+  cprintf("\n\n we are inside exit \n\n");
   struct proc *curproc = myproc();
   struct proc *p;
   int fd;
@@ -275,7 +275,7 @@ exit(int status)
 int
 wait(int *status)
 {
-//cprintf("\n\n we are inside wait \n\n"); 
+cprintf("\n\n we are inside wait \n\n"); 
   struct proc *p;
   int havekids, pid;
   struct proc *curproc = myproc();
@@ -322,7 +322,7 @@ wait(int *status)
 
 int waitpid(int pid, int * status, int options)
 {
-  //cprintf("\n\n inside waitpid \n\n");   //added this as test
+  cprintf("\n\n inside waitpid \n\n");   //added this as test
   struct proc *p;
  	int pid1;
    struct proc * curproc = myproc();
@@ -370,27 +370,21 @@ sleep(curproc, &ptable.lock);
 //-----------------------------------------------------------------------
 int addpriority(int pid, int set_priority)
 {
-struct proc *p = myproc();
-//acquire(&ptable.lock);
-//for(p = ptable.proc; p<&ptable.proc[NPROC]; p++){
+struct proc *p;
 
-//	if(p->pid == pid){ //checks if the current process pid is the one we want to set.
-	p->priority = set_priority; //sets current process priority to the specified one
-	p->state = RUNNABLE;	
-//	}
+for(p = ptable.proc; p<&ptable.proc[NPROC]; p++){
 
-//p->priority=set_priority;
-//p->state=RUNNABLE;
-//}
-//release(&ptable.lock);
-//yield();
+	if(p->pid == pid){ //checks if the current process pid is the one we want to set.
+		p->priority = set_priority; //sets current process priority to the specified one
+	}
+
 return 0;
 }
 
 //-----------------------------------------------------------------------
 
 
-//---------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -402,55 +396,40 @@ return 0;
 void
 scheduler(void)
 {
- struct proc *p;
+  struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
-  int i = 0;
-  int flag = 1;
+   
   for(;;){
     // Enable interrupts on this processor.
     sti();
 
     // Loop over process table looking for process to run.
-	acquire(&ptable.lock); 
-//<<<<<<< HEAD
-    for(i = 0; i < 32; ++i){
-//=======
-    for(i = 0; i <= 31; i++){
-//>>>>>>> 3d81f7ef58138924c05c55adf37fb64d9bbad507
-	while(flag){
-		//cprintf("asdasdasD\n");
-		flag = 0;
-		//for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-		for(p = &ptable.proc[NPROC] - 1; p >= ptable.proc; p--){
-			//while(flag){
-			if(p->priority == i && p->state == RUNNABLE){
-				//cprintf("should not print first one\n");
-				flag = 1;
-				c->proc = p;
-				switchuvm(p);
-				p->state = RUNNING;
-				swtch(&(c->scheduler), p->context);
-				switchkvm();
-				c->proc = 0; 
-			}
+    acquire(&ptable.lock);
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE)
+        continue;
+      //add a loop here 
+      if(p->state == RUNNABLE && p->priority
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      //c->proc = p;  chaged this line so current process is the highest priority
-      //switchuvm(p); changed this so its the process with highest priority thats running
-      //p->state = RUNNING;
-      //swtch(&(c->scheduler), p->context);
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+
+      swtch(&(c->scheduler), p->context);
+      switchkvm();
+
       // Process is done running for now.
       // It should have changed its p->state before coming back.
-   		}
-   	}
-	flag = 1;
-   }
-	release(&ptable.lock);
+      c->proc = 0;
+    }
+    release(&ptable.lock);
+
+  }
 }
-}
-}
+
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores
 // intena because intena is a property of this
