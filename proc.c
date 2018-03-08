@@ -152,7 +152,18 @@ userinit(void)
 
   release(&ptable.lock);
 }
+int stack(void){
+uint a,b;
+struct proc *curproc = myproc();
+a = PGROUNDUP(KERNBASE - (curproc->pages +1)*PGSIZE);
+b = KERNBASE - curproc->pages*PGSIZE -1;
+if(allocuvm(curproc->pgdir, a,b) == 0)
+return -1;
 
+curproc->pages = curproc->pages+1;
+switchuvm(curproc);
+return 0;
+}
 // Grow current process's memory by n bytes.
 // Return 0 on success, -1 on failure.
 int

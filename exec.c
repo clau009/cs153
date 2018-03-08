@@ -71,7 +71,7 @@ exec(char *path, char **argv)
 */
 //uint st;
 sp = PGROUNDDOWN(KERNBASE)-1;
-if((sp = allocuvm(pgdir, sp - PGSIZE, sp) == 0))
+if((sp = allocuvm(pgdir, sp - PGSIZE, sp)) == 0)
 goto bad;
 
 //clearpteu(pgdir, (char*)(sp));
@@ -101,9 +101,8 @@ goto bad;
     if(*s == '/')
       last = s+1;
   safestrcpy(curproc->name, last, sizeof(curproc->name));
-
   // Commit to the user image.
-  curproc->pages = 2*PGSIZE;
+  curproc->pages = 1;
   oldpgdir = curproc->pgdir;
   curproc->pgdir = pgdir;
   curproc->sz = sz;
